@@ -13,10 +13,17 @@ public class CurrencyExchangeController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private CurrencyExchangeRepository repository;
+
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to){
+        CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
 
-        CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
+        if(currencyExchange == null){
+            throw new RuntimeException("Unable to Find data");
+        }
+
         String port = environment.getProperty("local.server.port");
         currencyExchange.setEnvironment(port);
 
