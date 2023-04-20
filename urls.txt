@@ -1,0 +1,18 @@
+Limits Service
+http://localhost:8888/limits-service/default
+
+//Limits Service for dev profile
+http://localhost:8888/limits-service/dev
+
+Currency Exchange
+http://localhost:8000/currency-exchange/from/USD/to/INR
+
+Currency Conversion using Rest Template Client
+http://localhost:8100/currency-conversion/from/USD/to/INR/quantity/5
+
+Currency Conversion using Feign Rest Client
+http://localhost:8100/currency-conversion-feign/from/USD/to/INR/quantity/5
+
+Eureka
+http://localhost:8761/
+
