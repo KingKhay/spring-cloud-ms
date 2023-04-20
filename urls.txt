@@ -16,3 +16,5 @@ http://localhost:8100/currency-conversion-feign/from/USD/to/INR/quantity/5
 Eureka
 http://localhost:8761/
 
+
+
