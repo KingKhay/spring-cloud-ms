@@ -5,7 +5,7 @@ spring:
     gateway:
       discovery:
         locator:
-          lower-case-service-id: true
+          enabled: true
       routes:
         - id: currency-exchange
           uri: lb://currency-exchange
