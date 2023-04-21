@@ -1,18 +1,20 @@
 spring:
   application:
     name: api-gateway
-
   cloud:
     gateway:
       discovery:
         locator:
           lower-case-service-id: true
-          enabled: true
       routes:
         - id: currency-exchange
           uri: lb://currency-exchange
           predicates:
             - Path=/currency-exchange/**
+        - id: currency-conversion
+          uri: lb://currency-conversion
+          predicates:
+            - Path=/currency-conversion/**
 server:
   port: 8765
 
@@ -20,5 +22,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
 
