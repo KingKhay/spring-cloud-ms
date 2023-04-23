@@ -32,16 +32,13 @@ public class CurrencyConversionController {
 
         CurrencyConversion body = response.getBody();
 
-        CurrencyConversion currencyConversion =
-                new CurrencyConversion(body.getId(),
-                        from,
-                        to,
-                        quantity,
-                        body.getConversionMultiple(),
-                        quantity.multiply(body.getConversionMultiple()),
-                        body.getEnvironment());
-
-        return currencyConversion;
+        return new CurrencyConversion(body.getId(),
+                from,
+                to,
+                quantity,
+                body.getConversionMultiple(),
+                quantity.multiply(body.getConversionMultiple()),
+                body.getEnvironment());
     }
 
 
