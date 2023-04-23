@@ -1,5 +1,6 @@
 package com.khaydev.microservices.currencyconversionservice;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,10 @@ public class CurrencyConversionController {
     @Autowired
     private CurrencyExchangeProxy proxy;
 
+    private final static String currency_conversion = "currency_conversion";
+
     @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
+    @CircuitBreaker(name= currency_conversion, fallbackMethod = "fallbackForCurrencyConversion")
     public CurrencyConversion calculateCurrencyConversion(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
 
         HashMap<String, String> uriVariables = new HashMap<>();
@@ -52,5 +56,10 @@ public class CurrencyConversionController {
                 currencyConversion.getConversionMultiple(),
                 quantity.multiply(currencyConversion.getConversionMultiple()),
                 currencyConversion.getEnvironment() + " feign");
+    }
+
+
+    public CurrencyConversion fallbackForCurrencyConversion(Exception exception){
+        return new CurrencyConversion(0L, "Non", "Non", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "fallback");
     }
 }
