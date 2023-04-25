@@ -1,6 +1,7 @@
 package com.khaydev.microservices.currencyconversionservice;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,8 @@ public class CurrencyConversionController {
 
         CurrencyConversion body = response.getBody();
 
-        return new CurrencyConversion(body.getId(),
+        return new CurrencyConversion(
+                body.getId(),
                 from,
                 to,
                 quantity,
@@ -45,10 +47,8 @@ public class CurrencyConversionController {
 
     @GetMapping("/currency-conversion/feign/from/{from}/to/{to}/quantity/{quantity}")
     @Retry(name = "currency_conversion_retry", fallbackMethod = "handleFallBack")
+    @RateLimiter(name = "currency_conversion")
     public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
-        System.out.println("Calling Method!!");
-        ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8000/some-dummy-url", String.class);
-
         CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
         return new CurrencyConversion(currencyConversion.getId(),
                 from,
