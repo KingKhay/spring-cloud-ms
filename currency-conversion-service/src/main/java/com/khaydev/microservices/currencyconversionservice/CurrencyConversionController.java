@@ -1,6 +1,7 @@
 package com.khaydev.microservices.currencyconversionservice;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +43,11 @@ public class CurrencyConversionController {
     }
 
 
-    @GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
+    @GetMapping("/currency-conversion/feign/from/{from}/to/{to}/quantity/{quantity}")
+    @Retry(name = "currency_conversion_retry", fallbackMethod = "handleFallBack")
     public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
+        System.out.println("Calling Method!!");
+        ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8000/some-dummy-url", String.class);
 
         CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
         return new CurrencyConversion(currencyConversion.getId(),
@@ -55,6 +59,9 @@ public class CurrencyConversionController {
                 currencyConversion.getEnvironment() + " feign");
     }
 
+    public CurrencyConversion handleFallBack(Exception ex){
+        return new CurrencyConversion(0L,"TBC","TBC",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,"fallback");
+    }
 
     public CurrencyConversion fallbackForCurrencyConversion(Exception exception){
         return new CurrencyConversion(0L, "Non", "Non", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "fallback");
