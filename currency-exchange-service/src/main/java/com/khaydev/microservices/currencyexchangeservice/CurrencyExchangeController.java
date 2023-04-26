@@ -1,6 +1,7 @@
 package com.khaydev.microservices.currencyexchangeservice;
 
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ public class CurrencyExchangeController {
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     @Bulkhead(name= "currency-exchange", fallbackMethod = "handleBulkHeadFallBack")
+    @RateLimiter(name = "currency-exchange")
     public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to){
         CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
 
@@ -33,7 +35,7 @@ public class CurrencyExchangeController {
         return currencyExchange;
     }
 
-    public CurrencyExchange handleBulkHeadFallBack(Exception ex){
+    private CurrencyExchange handleBulkHeadFallBack(Exception ex){
         return new CurrencyExchange(1L, "TBC", "TBC", BigDecimal.ZERO);
     }
 }
