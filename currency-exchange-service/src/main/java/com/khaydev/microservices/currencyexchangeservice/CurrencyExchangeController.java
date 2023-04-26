@@ -1,10 +1,13 @@
 package com.khaydev.microservices.currencyexchangeservice;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 
 @RestController
 public class CurrencyExchangeController {
@@ -16,6 +19,7 @@ public class CurrencyExchangeController {
     private CurrencyExchangeRepository repository;
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    @Bulkhead(name= "currency-exchange", fallbackMethod = "handleBulkHeadFallBack")
     public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to){
         CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
 
@@ -27,6 +31,10 @@ public class CurrencyExchangeController {
         currencyExchange.setEnvironment(port);
 
         return currencyExchange;
+    }
+
+    public CurrencyExchange handleBulkHeadFallBack(Exception ex){
+        return new CurrencyExchange(1L, "TBC", "TBC", BigDecimal.ZERO);
     }
 }
 
