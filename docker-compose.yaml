@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  currency-conversion:
+    image: khaydev1/mmv1-currency-conversion-service:0.0.1-SNAPSHOT
+    ports:
+      - "8100:8100"
+    networks:
+      - currency-microservice-network
+
+networks:
+  currency-microservice-network:
