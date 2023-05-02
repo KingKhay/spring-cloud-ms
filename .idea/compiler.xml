@@ -7,13 +7,23 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
+        <module name="currency-exchange-service" />
+        <module name="discovery-server" />
+        <module name="currency-conversion-service" />
         <module name="limits-service" />
+        <module name="spring-cloud-config-server" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
+      <module name="currency-conversion-service" options="-parameters" />
+      <module name="currency-exchange-service" options="-parameters" />
+      <module name="discovery-server" options="-parameters" />
       <module name="limits-service" options="-parameters" />
+      <module name="spring-cloud-config-server" options="-parameters" />
     </option>
   </component>
 </project>
