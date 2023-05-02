@@ -1,12 +1,45 @@
 version: '3.7'
 
 services:
+  discovery-server:
+    image: khaydev1/mmv1-discovery-server:0.0.1-SNAPSHOT
+    ports:
+       - "8761:8761"
+    networks:
+      - currency-microservice-network
+
   currency-conversion:
     image: khaydev1/mmv1-currency-conversion-service:0.0.1-SNAPSHOT
     ports:
       - "8100:8100"
     networks:
       - currency-microservice-network
+    depends_on:
+      - discovery-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://discovery-server:8761/eureka
+
+  currency-exchange:
+    image: khaydev1/mmv1-currency-exchange-service:0.0.1-SNAPSHOT
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-microservice-network
+    depends_on:
+      - discovery-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://discovery-server:8761/eureka
+
+  api-gateway:
+    image: khaydev1/mmv1-api-gateway:0.0.1-SNAPSHOT
+    ports:
+      - "8765:8765"
+    networks:
+      - currency-microservice-network
+    depends_on:
+      - discovery-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://discovery-server:8761/eureka
 
 networks:
   currency-microservice-network:
