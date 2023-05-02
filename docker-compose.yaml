@@ -41,5 +41,13 @@ services:
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://discovery-server:8761/eureka
 
+  zipkin-server:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - currency-microservice-network
+    restart: always
+
 networks:
   currency-microservice-network:
