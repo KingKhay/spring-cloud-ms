@@ -17,6 +17,7 @@ public class CurrencyExchangeProxyConfig {
 
     @Bean
     public WebClient webClient(){
+
         return WebClient.builder()
                 .baseUrl("http://currency-exchange")
                 .filter(filterFunction)
