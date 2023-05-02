@@ -23,6 +23,7 @@ public class CurrencyExchangeController {
     @Bulkhead(name= "currency-exchange", fallbackMethod = "handleBulkHeadFallBack")
     @RateLimiter(name = "currency-exchange")
     public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to){
+        System.out.println("Retrieve Exchange Value Called");
         CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
 
         if(currencyExchange == null){

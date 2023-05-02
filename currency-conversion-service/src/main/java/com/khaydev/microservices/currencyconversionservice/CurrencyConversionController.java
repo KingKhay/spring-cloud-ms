@@ -49,14 +49,16 @@ public class CurrencyConversionController {
     @Retry(name = "currency_conversion_retry", fallbackMethod = "handleFallBack")
     @RateLimiter(name = "currency_conversion")
     public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
-        CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
-        return new CurrencyConversion(currencyConversion.getId(),
+        System.out.println("CalculateCurrencyConversionFeign Called");
+        CurrencyExchange currencyExchange = proxy.retrieveExchangeValue(from, to);
+        System.out.println(currencyExchange.conversionMultiple());
+        return new CurrencyConversion(currencyExchange.id(),
                 from,
                 to,
                 quantity,
-                currencyConversion.getConversionMultiple(),
-                quantity.multiply(currencyConversion.getConversionMultiple()),
-                currencyConversion.getEnvironment() + " feign");
+                currencyExchange.conversionMultiple(),
+                quantity.multiply(currencyExchange.conversionMultiple()),
+                currencyExchange.environment() + " feign");
     }
 
     public CurrencyConversion handleFallBack(Exception ex){
