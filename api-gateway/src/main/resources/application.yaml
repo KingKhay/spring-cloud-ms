@@ -25,3 +25,8 @@ eureka:
   instance:
     prefer-ip-address: true
 
+#Zipkin Configuration
+management:
+  tracing:
+    sampling:
+      probability: 1

@@ -3,6 +3,8 @@ package com.khaydev.microservices.currencyconversionservice;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,8 @@ public class CurrencyConversionController {
     private CurrencyExchangeProxy proxy;
 
     private final static String currency_conversion = "currency_conversion";
+
+    private final Logger logger = LoggerFactory.getLogger(CurrencyConversionController.class);
 
     @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
     @CircuitBreaker(name= currency_conversion, fallbackMethod = "fallbackForCurrencyConversion")
@@ -49,9 +53,8 @@ public class CurrencyConversionController {
     @Retry(name = "currency_conversion_retry", fallbackMethod = "handleFallBack")
     @RateLimiter(name = "currency_conversion")
     public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
-        System.out.println("CalculateCurrencyConversionFeign Called");
+        logger.info("Calculating currency conversion");
         CurrencyExchange currencyExchange = proxy.retrieveExchangeValue(from, to);
-        System.out.println(currencyExchange.conversionMultiple());
         return new CurrencyConversion(currencyExchange.id(),
                 from,
                 to,
