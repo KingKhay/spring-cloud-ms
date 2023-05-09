@@ -38,6 +38,10 @@ public class CurrencyConversionController {
 
         CurrencyConversion body = response.getBody();
 
+        if(body == null){
+            return new CurrencyConversion();
+        }
+
         return new CurrencyConversion(
                 body.getId(),
                 from,
