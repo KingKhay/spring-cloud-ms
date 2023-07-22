@@ -2,6 +2,8 @@ package com.khaydev.microservices.currencyexchangeservice;
 
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +21,17 @@ public class CurrencyExchangeController {
     @Autowired
     private CurrencyExchangeRepository repository;
 
+    private Logger logger = LoggerFactory.getLogger(CurrencyExchangeController.class);
+
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     @Bulkhead(name= "currency-exchange", fallbackMethod = "handleBulkHeadFallBack")
     @RateLimiter(name = "currency-exchange")
     public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to){
-        System.out.println("Retrieve Exchange Value Called");
+        logger.info("Retrieve Exchange Value Called");
         CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
 
         if(currencyExchange == null){
-            throw new RuntimeException("Unable to Find data");
+            throw new OperationFailedException("Unable to Find data");
         }
 
         String port = environment.getProperty("local.server.port");
