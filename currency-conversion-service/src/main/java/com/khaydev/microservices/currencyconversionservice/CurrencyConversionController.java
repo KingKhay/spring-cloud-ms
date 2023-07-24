@@ -21,7 +21,7 @@ public class CurrencyConversionController {
     @Autowired
     private CurrencyExchangeProxy proxy;
 
-    private final static String currency_conversion = "currency_conversion";
+    private static final String currency_conversion = "currency_conversion";
 
     private final Logger logger = LoggerFactory.getLogger(CurrencyConversionController.class);
 
