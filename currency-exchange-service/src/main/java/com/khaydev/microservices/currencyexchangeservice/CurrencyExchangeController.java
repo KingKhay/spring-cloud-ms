@@ -21,6 +21,8 @@ public class CurrencyExchangeController {
     @Autowired
     private CurrencyExchangeRepository repository;
 
+    private CurrencyExc
+
     private Logger logger = LoggerFactory.getLogger(CurrencyExchangeController.class);
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
